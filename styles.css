@@ -1,0 +1,48 @@
+/* quitar espacios raros del navegador */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* toda la pantalla */
+body {
+  height: 100vh;
+  font-family: Arial;
+}
+
+/* BANNER */
+#banner {
+  height: 90px;
+  background: #1e293b;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+
+  font-size: 1.8rem;  /* tamano de letra */
+  font-weight: 420;   /* grosor de letra */
+}
+
+/* CONTENEDOR PRINCIPAL */
+#layout {
+  height: calc(100vh - 80px);
+  display: flex;
+}
+
+/* SIDEBAR */
+#sidebar {
+  width: 300px;
+  background: #e2e8f0;
+  padding: 15px;
+  
+  font-size: 1.1rem;
+  font-weight: 300;
+
+}
+
+/* MAPA */
+#map {
+  flex: 1;
+}
