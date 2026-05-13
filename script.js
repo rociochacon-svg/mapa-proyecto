@@ -65,7 +65,7 @@ onValue(ubicacionRef, (snapshot) => {
     }
 });
 
-const rutaRef = ref(db, "rutaBus1");
+const rutaRef = ref(db, "rutaBus2");
 
 onValue(rutaRef, (snapshot) => {
     const data = snapshot.val();
