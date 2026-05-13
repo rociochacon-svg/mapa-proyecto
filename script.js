@@ -34,7 +34,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var marker = L.marker([2.4448, -76.6147]).addTo(map);
 
 // 🔴 LÍNEA DE RUTA
-window.lineaTemporal = L.polyline([], {
+window.lineaTemporal = L.polyline(window.ruta, {
     color: 'red',
     weight: 5
 }).addTo(map);
