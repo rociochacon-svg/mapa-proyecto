@@ -11,7 +11,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 
-// 🔑 CONFIG
+// 🔑 CONFIG FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyC7i13NFAQjYmE5wuBXW4ZQ1o1ptZBulws",
     authDomain: "flowcity1-44199.firebaseapp.com",
@@ -20,12 +20,16 @@ const firebaseConfig = {
 };
 
 
-// 🔌 INICIAR FIREBASE
+// 🔌 INICIALIZAR
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
+
+// ======================================================
 // 🗺️ MAPA
+// ======================================================
+
 var map = L.map('map', {
     zoom: 15,
     minZoom: 13,
@@ -39,7 +43,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
-// 🔒 LÍMITES POPAYÁN
+// 🔒 LÍMITES
 var popayanBounds = L.latLngBounds(
     [2.35, -76.72],
     [2.53, -76.54]
@@ -56,28 +60,12 @@ map.setMaxBounds(popayanBounds);
 window.rutas = {};
 
 
-// 🔴 BUS 1 = rutaBus2
-window.rutas.rutaBus2 = [
-
-    // 🔥 PEGA AQUÍ TODA TU RUTA ROJA
-    [2.473751299045302,-76.55471920967103],
-    [2.4730009801831168,-76.55512690544128]
-
-];
+// 🔴 RUTA BUS 1
+window.rutas.rutaBus2 = [];
 
 
-
-// 🔵 BUS 2 = rutaBus3
-window.rutas.rutaBus3 = [
-
-    // 🔥 PEGA AQUÍ TODA TU RUTA AZUL
-    // EJEMPLO:
-
-    [2.4594308545037085,-76.64751291275026],
-    [2.458648370686101,-76.64592504501344],
-    [2.45863765172651,-76.64573192596437]
-
-];
+// 🔵 RUTA BUS 2
+window.rutas.rutaBus3 = [];
 
 
 
@@ -98,32 +86,32 @@ function dibujarRutas() {
 
 
     // 🔴 RUTA ROJA
-    window.lineaRutaBus2 = L.polyline(
-        window.rutas.rutaBus2,
-        {
-            color: 'red',
-            weight: 6,
-            opacity: 0.8,
-            smoothFactor: 1
-        }
-    ).addTo(map);
+    if (window.rutas.rutaBus2.length > 0) {
+
+        window.lineaRutaBus2 = L.polyline(
+            window.rutas.rutaBus2,
+            {
+                color: 'red',
+                weight: 6,
+                opacity: 0.8
+            }
+        ).addTo(map);
+    }
 
 
     // 🔵 RUTA AZUL
-    window.lineaRutaBus3 = L.polyline(
-        window.rutas.rutaBus3,
-        {
-            color: 'blue',
-            weight: 6,
-            opacity: 0.8,
-            smoothFactor: 1
-        }
-    ).addTo(map);
+    if (window.rutas.rutaBus3.length > 0) {
+
+        window.lineaRutaBus3 = L.polyline(
+            window.rutas.rutaBus3,
+            {
+                color: 'blue',
+                weight: 6,
+                opacity: 0.8
+            }
+        ).addTo(map);
+    }
 }
-
-
-// 🔥 DIBUJAR AL INICIO
-dibujarRutas();
 
 
 
@@ -131,7 +119,7 @@ dibujarRutas();
 // 🔥 BUS ACTIVO
 // ======================================================
 
-// 👉 CAMBIAR ENTRE:
+// 👇 CAMBIAR ENTRE:
 // "rutaBus2"
 // "rutaBus3"
 
@@ -150,7 +138,7 @@ map.on('click', function(e) {
         e.latlng.lng
     ];
 
-    // agregar punto al bus activo
+    // agregar punto
     window.rutas[window.busActivo].push(punto);
 
     dibujarRutas();
@@ -229,8 +217,6 @@ window.deshacerRutaBus2 = function () {
     window.rutas.rutaBus2.pop();
 
     dibujarRutas();
-
-    console.log("Último punto rojo eliminado ↩️");
 };
 
 
@@ -240,14 +226,12 @@ window.deshacerRutaBus3 = function () {
     window.rutas.rutaBus3.pop();
 
     dibujarRutas();
-
-    console.log("Último punto azul eliminado ↩️");
 };
 
 
 
 // ======================================================
-// 🚍 ICONO BUSES
+// 🚍 ICONOS
 // ======================================================
 
 var busIcon = L.icon({
@@ -260,7 +244,7 @@ var busIcon = L.icon({
 
 
 // ======================================================
-// 🔴 BUS 1 EN TIEMPO REAL
+// 🔴 BUS 1
 // ======================================================
 
 var markerBus1 = L.marker(
@@ -288,7 +272,7 @@ onValue(ubicacionBus1, (snapshot) => {
 
 
 // ======================================================
-// 🔵 BUS 2 EN TIEMPO REAL
+// 🔵 BUS 2
 // ======================================================
 
 var markerBus2 = L.marker(
@@ -316,11 +300,9 @@ onValue(ubicacionBus2, (snapshot) => {
 
 
 // ======================================================
-// 📡 CARGAR RUTAS DESDE FIREBASE
+// 📡 CARGAR RUTA ROJA
 // ======================================================
 
-
-// 🔴 RUTA ROJA
 const rutaBus2Ref = ref(db, "rutaBus2");
 
 
@@ -333,11 +315,17 @@ onValue(rutaBus2Ref, (snapshot) => {
         window.rutas.rutaBus2 = data;
 
         dibujarRutas();
+
+        console.log("Ruta roja cargada 🔴");
     }
 });
 
 
-// 🔵 RUTA AZUL
+
+// ======================================================
+// 📡 CARGAR RUTA AZUL
+// ======================================================
+
 const rutaBus3Ref = ref(db, "rutaBus3");
 
 
@@ -350,5 +338,7 @@ onValue(rutaBus3Ref, (snapshot) => {
         window.rutas.rutaBus3 = data;
 
         dibujarRutas();
+
+        console.log("Ruta azul cargada 🔵");
     }
 });
