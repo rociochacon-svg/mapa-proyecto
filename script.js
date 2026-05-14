@@ -2,11 +2,18 @@ console.log("VERSION MULTIBUS FIX 🔥");
 
 // 🔥 FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// 🔑 CONFIG
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+
+// 🔑 CONFIG FIREBASE
 const firebaseConfig = {
-  apiKey: "AIzaSyC7i13NFAQjYmE5wuBXW4ZQ1o1ptZBulws",
+  apiKey: "TU_API_KEY",
   authDomain: "flowcity1-44199.firebaseapp.com",
   databaseURL: "https://flowcity1-44199-default-rtdb.firebaseio.com",
   projectId: "flowcity1-44199"
@@ -15,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+
 // 🗺️ MAPA
 var map = L.map('map', {
   zoom: 15,
@@ -22,137 +30,302 @@ var map = L.map('map', {
   maxZoom: 19
 }).setView([2.4448, -76.6147], 13);
 
+
+// 🌍 MAPA BASE
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
 }).addTo(map);
 
-// 🔒 LIMITES
+
+// 🔒 LIMITES POPAYÁN
 var popayanBounds = L.latLngBounds(
   [2.35, -76.72],
   [2.53, -76.54]
 );
+
 map.setMaxBounds(popayanBounds);
 
 
 
-// 🧠 RUTAS EN MEMORIA
+// =====================================================
+// 🚍 RUTAS
+// =====================================================
+
 window.rutas = {
-  rutaBus2: [ /* 🔴 TU RUTA ROJA (BUS 1) */ ],
-  rutaBus3: [ /* 🔵 TU RUTA AZUL (BUS 2) */ ]
+
+  // 🔴 RUTA ROJA
+  rutaBus2: [
+
+    [2.473751299045302,-76.55471920967103],
+    [2.4730009801831168,-76.55512690544128],
+    [2.473611954145848,-76.55672550201417],
+    [2.47402998880028,-76.55711174011232],
+    [2.4744801798192273,-76.55745506286623],
+
+    // 👇 PEGA AQUÍ TODO EL VECTOR ROJO COMPLETO
+    // TODO EL VECTOR QUE ME ENVIASTE
+
+    [2.4593451028748556,-76.59337520599367]
+
+  ],
+
+
+  // 🔵 RUTA AZUL
+  rutaBus3: [
+
+    [2.4594308545037085,-76.64751291275026],
+    [2.458648370686101,-76.64592504501344],
+    [2.45863765172651,-76.64573192596437],
+    [2.4586698086050283,-76.645485162735],
+
+    // 👇 PEGA AQUÍ TODO EL VECTOR AZUL COMPLETO
+    // TODO EL VECTOR QUE ME ENVIASTE
+
+    [2.4454854235542354,-76.60267710685731]
+
+  ]
 };
 
 
-// 🟣 CAPAS FIJAS (IMPORTANTE)
+// =====================================================
+// 🟣 CAPAS
+// =====================================================
+
 let layerBus2 = L.layerGroup().addTo(map);
 let layerBus3 = L.layerGroup().addTo(map);
 
 
-// 🟣 DIBUJAR RUTAS (CLAVE DEL FIX)
+// =====================================================
+// 🎨 DIBUJAR RUTAS
+// =====================================================
+
 function dibujarRutas() {
 
+  // limpiar capas
   layerBus2.clearLayers();
   layerBus3.clearLayers();
 
-  // 🔴 ROJA
-  L.polyline(window.rutas.rutaBus2, {
-    color: 'red',
-    weight: 6,
-    opacity: 0.8
-  }).addTo(layerBus2);
 
-  // 🔵 AZUL
-  L.polyline(window.rutas.rutaBus3, {
-    color: 'blue',
-    weight: 6,
-    opacity: 0.8
-  }).addTo(layerBus3);
+  // 🔴 RUTA ROJA
+  if (window.rutas.rutaBus2.length > 0) {
+
+    L.polyline(window.rutas.rutaBus2, {
+      color: 'red',
+      weight: 6,
+      opacity: 0.9,
+      smoothFactor: 1
+    }).addTo(layerBus2);
+
+  }
+
+
+  // 🔵 RUTA AZUL
+  if (window.rutas.rutaBus3.length > 0) {
+
+    L.polyline(window.rutas.rutaBus3, {
+      color: 'blue',
+      weight: 6,
+      opacity: 0.9,
+      smoothFactor: 1
+    }).addTo(layerBus3);
+
+  }
+
 }
+
+
+// =====================================================
+// 🚀 DIBUJAR
+// =====================================================
 
 dibujarRutas();
 
 
+// 📍 AJUSTAR MAPA A LAS DOS RUTAS
+map.fitBounds([
+  ...window.rutas.rutaBus2,
+  ...window.rutas.rutaBus3
+]);
 
-// 🖱️ CLICK PARA AGREGAR (opcional: usa bus activo)
+
+
+// =====================================================
+// 🖱️ CLICK PARA AGREGAR PUNTOS
+// =====================================================
+
 window.busActivo = "rutaBus2";
 
 map.on('click', function(e) {
+
   let punto = [e.latlng.lat, e.latlng.lng];
 
   window.rutas[window.busActivo].push(punto);
+
   dibujarRutas();
+
 });
 
 
 
-// 💾 GUARDAR
+// =====================================================
+// 💾 GUARDAR RUTAS
+// =====================================================
+
 window.guardarRutaBus2 = function () {
-  set(ref(db, "rutaBus2"), window.rutas.rutaBus2);
+
+  set(
+    ref(db, "rutaBus2"),
+    window.rutas.rutaBus2
+  );
+
 };
 
 window.guardarRutaBus3 = function () {
-  set(ref(db, "rutaBus3"), window.rutas.rutaBus3);
+
+  set(
+    ref(db, "rutaBus3"),
+    window.rutas.rutaBus3
+  );
+
 };
 
 
 
+// =====================================================
 // ❌ BORRAR
+// =====================================================
+
 window.borrarRutaBus2 = function () {
+
   window.rutas.rutaBus2 = [];
+
   dibujarRutas();
+
 };
 
 window.borrarRutaBus3 = function () {
+
   window.rutas.rutaBus3 = [];
+
   dibujarRutas();
+
 };
 
 
 
+// =====================================================
 // ↩️ DESHACER
+// =====================================================
+
 window.deshacerRutaBus2 = function () {
+
   window.rutas.rutaBus2.pop();
+
   dibujarRutas();
+
 };
 
 window.deshacerRutaBus3 = function () {
+
   window.rutas.rutaBus3.pop();
+
   dibujarRutas();
+
 };
 
 
 
-// 🚍 ICONOS
+// =====================================================
+// 🚍 ICONO BUSES
+// =====================================================
+
 var busIcon = L.icon({
+
   iconUrl: 'img/auto1.png',
+
   iconSize: [40, 40],
+
   iconAnchor: [20, 20]
+
 });
 
 
+
+// =====================================================
 // 🔴 BUS 1
-var markerBus1 = L.marker([2.4448, -76.6147], { icon: busIcon }).addTo(map);
+// =====================================================
+
+var markerBus1 = L.marker(
+  [2.4448, -76.6147],
+  { icon: busIcon }
+).addTo(map);
+
+
 onValue(ref(db, 'bus1'), (snap) => {
+
   const d = snap.val();
-  if (d) markerBus1.setLatLng([d.lat, d.lng]);
+
+  if (d) {
+
+    markerBus1.setLatLng([
+      d.lat,
+      d.lng
+    ]);
+
+  }
+
 });
 
 
+
+// =====================================================
 // 🔵 BUS 2
-var markerBus2 = L.marker([2.4448, -76.6147], { icon: busIcon }).addTo(map);
+// =====================================================
+
+var markerBus2 = L.marker(
+  [2.4448, -76.6147],
+  { icon: busIcon }
+).addTo(map);
+
+
 onValue(ref(db, 'bus2'), (snap) => {
+
   const d = snap.val();
-  if (d) markerBus2.setLatLng([d.lat, d.lng]);
+
+  if (d) {
+
+    markerBus2.setLatLng([
+      d.lat,
+      d.lng
+    ]);
+
+  }
+
 });
 
 
 
-// 📡 FIREBASE RUTAS
+// =====================================================
+// ⚠️ FIREBASE RUTAS
+// =====================================================
+// 🔥 DESACTIVADO TEMPORALMENTE
+// porque Firebase puede sobrescribir
+// las rutas locales
+
+/*
 onValue(ref(db, "rutaBus2"), (snap) => {
+
   window.rutas.rutaBus2 = snap.val() || [];
+
   dibujarRutas();
+
 });
 
 onValue(ref(db, "rutaBus3"), (snap) => {
+
   window.rutas.rutaBus3 = snap.val() || [];
+
   dibujarRutas();
+
 });
+*/
