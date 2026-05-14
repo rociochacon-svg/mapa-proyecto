@@ -156,6 +156,8 @@ function dibujarRutas() {
       opacity: 1,
       smoothFactor: 1,
 
+      dashArray: '10,10'  
+
     }).addTo(layerBus3);
 
   }
