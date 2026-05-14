@@ -156,9 +156,6 @@ function dibujarRutas() {
       opacity: 1,
       smoothFactor: 1,
 
-      // 🔥 punteada
-      dashArray: '10,10'
-
     }).addTo(layerBus3);
 
   }
