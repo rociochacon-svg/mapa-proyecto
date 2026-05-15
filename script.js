@@ -366,6 +366,16 @@ onValue(ref(db, 'bus2'), (snap) => {
 
 });
 
+// 🔥 LIMPIAR FIREBASE
+window.limpiarFirebase = async function () {
+
+  await set(ref(db, "rutaBus2"), []);
+  await set(ref(db, "rutaBus3"), []);
+
+  console.log("🔥 Firebase limpiado");
+
+};
+
 
 // =====================================================
 // ⚠️ FIREBASE RUTAS
