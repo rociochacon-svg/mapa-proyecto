@@ -1,31 +1,44 @@
-console.log("VERSION MULTIRUTAS FINAL 🔥");
+console.log("MAPA RUTAS FIJAS 🔥");
 
-// 🔥 FIREBASE
+// =====================================
+// 🔥 FIREBASE SOLO PARA BUSES
+// =====================================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
   getDatabase,
   ref,
-  onValue,
-  set
+  onValue
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 
-// 🔑 CONFIG FIREBASE
+// =====================================
+// 🔑 FIREBASE
+// =====================================
+
 const firebaseConfig = {
 
-  apiKey: "TU_APIKEY",
-  authDomain: "TU_DOMINIO.firebaseapp.com",
-  databaseURL: "https://TU_DB.firebaseio.com",
-  projectId: "TU_PROYECTO"
+  apiKey: "AIzaSyC7i13NFAQjYmE5wuBXW4ZQ1o1ptZBulws",
+
+  authDomain: "flowcity1-44199.firebaseapp.com",
+
+  databaseURL:
+    "https://flowcity1-44199-default-rtdb.firebaseio.com",
+
+  projectId: "flowcity1-44199"
 
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
 
+// =====================================
 // 🗺️ MAPA
+// =====================================
+
 var map = L.map('map', {
 
   zoom: 15,
@@ -35,7 +48,10 @@ var map = L.map('map', {
 }).setView([2.4448, -76.6147], 13);
 
 
-// 🌍 CAPA OPENSTREETMAP
+// =====================================
+// 🌍 MAPA BASE
+// =====================================
+
 L.tileLayer(
   'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
@@ -44,7 +60,10 @@ L.tileLayer(
 ).addTo(map);
 
 
+// =====================================
 // 🔒 LIMITES
+// =====================================
+
 var popayanBounds = L.latLngBounds(
 
   [2.35, -76.72],
@@ -55,159 +74,77 @@ var popayanBounds = L.latLngBounds(
 map.setMaxBounds(popayanBounds);
 
 
-// ======================================================
-// 🚍 RUTAS
-// ======================================================
-window.rutas = {
+// =====================================
+// 🔴 VECTOR ROJO
+// =====================================
 
-  // 🔴 RUTA ROJA
-  rutaBus2: [
-    [2.47,-76.55],
-    [2.48,-76.56],
-    [2.49,-76.57]
-   
-  ],
+const rutaRoja = [
+
+  // 🔥 PEGA AQUÍ TU VECTOR ROJO COMPLETO
+
+];
 
 
-  // 🔵 RUTA AZUL
-  rutaBus3: [
+// =====================================
+// 🔵 VECTOR AZUL
+// =====================================
 
-    [2.45,-76.64],
-    [2.46,-76.63],
-    [2.47,-76.62]
-    
+const rutaAzul = [
 
-  ]
+  // 🔥 PEGA AQUÍ TU VECTOR AZUL COMPLETO
 
-};
+];
 
 
-// ======================================================
-// 🟣 CAPAS
-// ======================================================
+// =====================================
+// 🔴 DIBUJAR ROJA
+// =====================================
 
-let layerBus2 = L.layerGroup().addTo(map);
-let layerBus3 = L.layerGroup().addTo(map);
+L.polyline(
 
+  rutaRoja,
 
-// ======================================================
-// 🎨 DIBUJAR RUTAS
-// ======================================================
+  {
 
-function dibujarRutas() {
+    color: 'red',
 
-  layerBus2.clearLayers();
-  layerBus3.clearLayers();
+    weight: 5,
 
+    opacity: 1,
 
-  // 🔴 RUTA ROJA
-  if (window.rutas.rutaBus2.length > 0) {
-
-    L.polyline(
-
-      window.rutas.rutaBus2,
-
-      {
-        color: 'red',
-        weight: 5,
-        opacity: 1,
-        smoothFactor: 1
-      }
-
-    ).addTo(layerBus2);
+    smoothFactor: 1
 
   }
 
+).addTo(map);
 
-  // 🔵 RUTA AZUL
-  if (window.rutas.rutaBus3.length > 0) {
 
-    L.polyline(
+// =====================================
+// 🔵 DIBUJAR AZUL
+// =====================================
 
-      window.rutas.rutaBus3,
+L.polyline(
 
-      {
-        color: 'blue',
-        weight: 5,
-        opacity: 1,
-        smoothFactor: 1
-      }
+  rutaAzul,
 
-    ).addTo(layerBus3);
+  {
+
+    color: 'blue',
+
+    weight: 5,
+
+    opacity: 1,
+
+    smoothFactor: 1
 
   }
 
-}
+).addTo(map);
 
 
-// 🔥 DIBUJAR AL INICIO
-dibujarRutas();
-
-
-// ======================================================
-// 🚫 DESACTIVADO PARA NO DAÑAR RUTAS
-// ======================================================
-
-/*
-
-map.on('click', function(e) {
-
-  let punto = [e.latlng.lat, e.latlng.lng];
-
-  window.rutas[window.busActivo].push(punto);
-
-  dibujarRutas();
-
-});
-
-*/
-
-
-// ======================================================
-// 💾 GUARDAR RUTAS
-// ======================================================
-
-window.guardarRutaBus2 = async function () {
-
-  await set(
-    ref(db, "rutaBus2"),
-    window.rutas.rutaBus2
-  );
-
-  console.log("✅ Ruta roja guardada");
-
-};
-
-
-window.guardarRutaBus3 = async function () {
-
-  await set(
-    ref(db, "rutaBus3"),
-    window.rutas.rutaBus3
-  );
-
-  console.log("✅ Ruta azul guardada");
-
-};
-
-
-// ======================================================
-// 🧹 LIMPIAR FIREBASE
-// ======================================================
-
-window.limpiarFirebase = async function () {
-
-  await set(ref(db, "rutaBus2"), []);
-  await set(ref(db, "rutaBus3"), []);
-
-  console.log("🔥 Firebase limpiado");
-
-};
-
-
-// ======================================================
-// 🚍 ICONO BUSES
-// ======================================================
+// =====================================
+// 🚍 ICONO
+// =====================================
 
 var busIcon = L.icon({
 
@@ -220,9 +157,9 @@ var busIcon = L.icon({
 });
 
 
-// ======================================================
+// =====================================
 // 🔴 BUS 1
-// ======================================================
+// =====================================
 
 var markerBus1 = L.marker(
 
@@ -246,9 +183,9 @@ onValue(ref(db, 'bus1'), (snap) => {
 });
 
 
-// ======================================================
+// =====================================
 // 🔵 BUS 2
-// ======================================================
+// =====================================
 
 var markerBus2 = L.marker(
 
@@ -272,48 +209,10 @@ onValue(ref(db, 'bus2'), (snap) => {
 });
 
 
-// ======================================================
-// 🔥 CARGAR RUTAS DESDE FIREBASE
-// ======================================================
+// =====================================
+// 🔥 DEBUG
+// =====================================
 
-onValue(ref(db, "rutaBus2"), (snap) => {
+console.log("ROJA:", rutaRoja.length);
 
-  const data = snap.val();
-
-  if (data && data.length > 0) {
-
-    window.rutas.rutaBus2 = data;
-
-    dibujarRutas();
-
-    console.log("🔴 Ruta roja cargada");
-
-  }
-
-});
-
-
-onValue(ref(db, "rutaBus3"), (snap) => {
-
-  const data = snap.val();
-
-  if (data && data.length > 0) {
-
-    window.rutas.rutaBus3 = data;
-
-    dibujarRutas();
-
-    console.log("🔵 Ruta azul cargada");
-
-  }
-
-});
-
-
-// ======================================================
-// 🔎 DEBUG
-// ======================================================
-
-console.log("ROJA:", window.rutas.rutaBus2.length);
-
-console.log("AZUL:", window.rutas.rutaBus3.length);
+console.log("AZUL:", rutaAzul.length);
