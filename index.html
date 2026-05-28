@@ -19,20 +19,24 @@
 
     <!-- SIDEBAR -->
     <aside id="sidebar">
-        ● Convenciones<br>
-        ● Rutas<br>
-        ● Información adicional<br>
-        ● Sistema de monitoreo de transporte público  <br>
-        ● Ruta Sotracauca La paz - Campanario - Pomona - Chirimia<br>    
+      <div id="sidebar-content">
+      ● Convenciones<br>
+      ● Rutas<br>
+      ● Información adicional<br>
+      ● Sistema de monitoreo de transporte público  <br>
+      ● Ruta Sotracauca La paz - Campanario - Pomona - Chirimia<br>
+      </div>
     </aside>
 
     <!-- MAPA -->
-    <div id="map"></div>
+    <div id="map">
+      <button id="sidebar-toggle" aria-expanded="true" aria-label="Alternar barra lateral">◀</button>
+    </div>
 
   </main>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script type="module" src="script.js?v=10"></script>
+  <script type="module" src="script.js"></script>
 
 </body>
 </html>
